@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Nutrientes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        label, button {
+            display: block;
+            margin: 10px 0;
+        }
+        .result {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Calculadora de Nutrientes para Plantas</h1>
+
+    <form id="nutrientForm">
+        <label for="n">Nivel de Nitrógeno (N) en el suelo (kg/ha):</label>
+        <input type="number" id="n" name="n" required>
+
+        <label for="p">Nivel de Fósforo (P) en el suelo (kg/ha):</label>
+        <input type="number" id="p" name="p" required>
+
+        <label for="k">Nivel de Potasio (K) en el suelo (kg/ha):</label>
+        <input type="number" id="k" name="k" required>
+
+        <label for="rn">Requerimiento de Nitrógeno (N) óptimo (kg/ha):</label>
+        <input type="number" id="rn" name="rn" required>
+
+        <label for="rp">Requerimiento de Fósforo (P) óptimo (kg/ha):</label>
+        <input type="number" id="rp" name="rp" required>
+
+        <label for="rk">Requerimiento de Potasio (K) óptimo (kg/ha):</label>
+        <input type="number" id="rk" name="rk" required>
+
+        <label for="plantas">Cantidad de plantas:</label>
+        <input type="number" id="plantas" name="plantas" required>
+
+        <button type="button" onclick="calcularNutrientes()">Calcular Nutrientes</button>
+    </form>
+
+    <div class="result" id="result"></div>
+
+    <script>
+        function calcularNutrientes() {
+            const eficienciaFertilizante = 0.7; // Eficiencia predeterminada
+
+            // Obtener valores del formulario
+            const n = parseFloat(document.getElementById('n').value);
+            const p = parseFloat(document.getElementById('p').value);
+            const k = parseFloat(document.getElementById('k').value);
+
+            const rn = parseFloat(document.getElementById('rn').value);
+            const rp = parseFloat(document.getElementById('rp').value);
+            const rk = parseFloat(document.getElementById('rk').value);
+
+            const plantas = parseInt(document.getElementById('plantas').value);
+
+            // Calcular déficits y requerimientos de fertilizante
+            const nutrientes = {
+                N: Math.max(0, (rn - n) / eficienciaFertilizante),
+                P: Math.max(0, (rp - p) / eficienciaFertilizante),
+                K: Math.max(0, (rk - k) / eficienciaFertilizante)
+            };
+
+            // Calcular por planta en gramos
+            const nutrientesPorPlanta = {
+                N: (nutrientes.N * 1000 / plantas).toFixed(2),
+                P: (nutrientes.P * 1000 / plantas).toFixed(2),
+                K: (nutrientes.K * 1000 / plantas).toFixed(2)
+            };
+
+            // Mostrar resultados
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<h2>Resultados:</h2>';
+            resultDiv.innerHTML += '<h3>Fertilizante necesario por hectárea:</h3>';
+            for (const [nutriente, cantidad] of Object.entries(nutrientes)) {
+                resultDiv.innerHTML += `<p>${nutriente}: ${cantidad.toFixed(2)} kg/ha</p>`;
+            }
+
+            resultDiv.innerHTML += '<h3>Fertilizante necesario por planta:</h3>';
+            for (const [nutriente, cantidad] of Object.entries(nutrientesPorPlanta)) {
+                resultDiv.innerHTML += `<p>${nutriente}: ${cantidad} g/planta</p>`;
+            }
+        }
+    </script>
+</body>
+</html>
